@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="es" style="--vino: #6d1a36; --oro: #d8b26a;"><head>
+    
+    
+  
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dulce Pecado — Editor</title>
+<style>
+  /* ===== Variables de color (paleta vino + oro) ===== */
+  :root{
+    --vino: #6d1a36;
+    --vino-oscuro: #4a1024;
+    --oro: #d8b26a;
+    --oro-suave: #f0dfc0;
+    --crema: #fdf8f0;
+    --texto: #2b1620;
+    --blanco: #ffffff;
+    --exito: #2e7d32;
+    --error: #b3261e;
+    --sombra: 0 6px 18px rgba(74,16,36,0.12);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    background: var(--crema);
+    color: var(--texto);
+    line-height:1.5;
+  }
+  h1,h2,h3{
+    font-family: 'Georgia', serif;
+    letter-spacing: 0.5px;
+  }
+  img, .emoji-img{max-width:100%;}
+  button{
+    cursor:pointer;
+    font-family: inherit;
+    border:none;
+    border-radius: 999px;
+    transition: transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+  }
+  button:active{ transform: scale(0.97); }
+
+  /* ===== Header público ===== */
+  header.site-header{
+    background: linear-gradient(135deg, var(--vino), var(--vino-oscuro));
+    color: var(--oro-suave);
+    text-align:center;
+    padding: 48px 20px 40px;
+    border-bottom: 4px solid var(--oro);
+  }
+  header.site-header .emoji-logo{ font-size: 48px; display:block; margin-bottom:8px;}
+  header.site-header h1{ margin:0; font-size: 2.1rem; color: var(--blanco); }
+  header.site-header p.slogan{ margin: 10px auto 0; max-width: 420px; font-style: italic; color: var(--oro-suave); }
+
+  main{ max-width: 720px; margin: 0 auto; padding: 24px 16px 60px; }
+
+  section.about{
+    background: var(--blanco);
+    border-radius: 16px;
+    padding: 22px;
+    box-shadow: var(--sombra);
+    margin-bottom: 28px;
+    text-align:center;
+  }
+  section.about h2{ color: var(--vino); margin-top:0;}
+
+  h2.section-title{
+    color: var(--vino);
+    text-align:center;
+    margin: 32px 0 16px;
+  }
+
+  .products-grid{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  @media(min-width:600px){
+    .products-grid{ grid-template-columns: 1fr 1fr; }
+  }
+
+  .product-card{
+    background: var(--blanco);
+    border-radius: 18px;
+    box-shadow: var(--sombra);
+    padding: 18px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    position:relative;
+  }
+  .product-card .product-emoji{
+    font-size: 40px;
+    text-align:center;
+  }
+  .product-card img.product-photo{
+    width:100%;
+    height:150px;
+    object-fit:cover;
+    border-radius:12px;
+  }
+  .product-card h3{ margin:6px 0 0; color: var(--vino); font-size:1.15rem;}
+  .product-card .price{ font-weight:bold; color: var(--vino-oscuro); }
+  .product-card p.desc{ margin:0; font-size:0.95rem; color:#4a3a40; flex-grow:1; }
+  .btn-pedir{
+    background: #25D366;
+    color:white;
+    padding: 10px 16px;
+    font-weight:bold;
+    font-size:0.95rem;
+    text-align:center;
+    text-decoration:none;
+    display:inline-block;
+    border-radius:999px;
+  }
+  .btn-pedir.alt{ background: var(--vino); }
+
+  section.contact{
+    text-align:center;
+    margin-top: 40px;
+  }
+  .contact-buttons{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:12px;
+    margin-top:14px;
+  }
+  .contact-buttons a{
+    padding:12px 20px;
+    border-radius:999px;
+    text-decoration:none;
+    font-weight:bold;
+    color:white;
+    font-size:0.95rem;
+  }
+  .contact-buttons a.wa{ background:#25D366; }
+  .contact-buttons a.ig{ background: linear-gradient(45deg,#f58529,#dd2a7b,#8134af); }
+  .contact-buttons a.mail{ background: var(--vino); }
+
+  footer{
+    text-align:center;
+    padding: 24px;
+    font-size: 0.8rem;
+    color: #8a7178;
+  }
+
+  /* ===== Botón flotante de edición ===== */
+  #btnToggleEdit{
+    position: fixed;
+    bottom: 18px;
+    right: 18px;
+    background: var(--vino);
+    color: var(--oro-suave);
+    padding: 12px 18px;
+    font-size: 0.95rem;
+    box-shadow: var(--sombra);
+    z-index: 500;
+  }
+
+  /* ===== Panel de administración ===== */
+  #adminPanel{
+    display:none;
+    background: var(--blanco);
+    border-top: 4px solid var(--oro);
+    padding: 20px 16px 80px;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  #adminPanel.open{ display:block; }
+
+  .admin-block{
+    background: var(--oro-suave);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+  .admin-block h3{ margin-top:0; color: var(--vino-oscuro); }
+
+  label{
+    display:block;
+    font-size: 0.85rem;
+    font-weight:bold;
+    margin: 10px 0 4px;
+    color: var(--vino-oscuro);
+  }
+  input[type=text], input[type=email], textarea, input[type=color], select{
+    width:100%;
+    padding: 9px 10px;
+    border-radius: 8px;
+    border: 1px solid #cbb;
+    font-family: inherit;
+    font-size: 0.95rem;
+  }
+  textarea{ resize: vertical; min-height: 60px; }
+
+  .btn-primary{
+    background: var(--vino);
+    color:white;
+    padding: 10px 18px;
+    font-weight:bold;
+    margin-top: 12px;
+  }
+  .btn-secondary{
+    background: var(--oro);
+    color: var(--vino-oscuro);
+    padding: 10px 18px;
+    font-weight:bold;
+    margin-top: 12px;
+  }
+  .btn-danger{
+    background: var(--error);
+    color:white;
+    padding: 8px 14px;
+    font-size: 0.85rem;
+  }
+  .btn-mini{
+    background: #ece0d8;
+    color: var(--vino-oscuro);
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  }
+
+  .product-admin-item{
+    background: white;
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 10px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .product-admin-item .info{ flex:1; min-width:150px; }
+  .product-admin-item .actions{ display:flex; gap:6px; flex-wrap:wrap; }
+
+  .export-buttons{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+
+  .instructivo{
+    background: #fff7e6;
+    border: 1px dashed var(--oro);
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 0.9rem;
+  }
+  .instructivo ol{ padding-left: 20px; margin: 8px 0; }
+  .instructivo strong{ color: var(--vino); }
+
+  /* Modal para agregar/editar producto */
+  #modalOverlay{
+    display:none;
+    position:fixed; inset:0;
+    background: rgba(0,0,0,0.5);
+    z-index: 900;
+    align-items:center;
+    justify-content:center;
+    padding: 16px;
+  }
+  #modalOverlay.open{ display:flex; }
+  #modalBox{
+    background:white;
+    border-radius: 16px;
+    padding: 20px;
+    max-width: 420px;
+    width:100%;
+    max-height: 90vh;
+    overflow-y:auto;
+  }
+  #modalBox h3{ margin-top:0; color: var(--vino); }
+
+  .msg{
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    margin: 10px 0;
+    display:none;
+  }
+  .msg.error{ background:#fdecea; color: var(--error); display:block; }
+  .msg.ok{ background:#e8f5e9; color: var(--exito); display:block; }
+
+  .admin-only-note{
+    font-size: 0.75rem;
+    color: #8a7178;
+    text-align:center;
+    margin-top: -6px;
+  }
+</style>
+</head>
+<body id="artifacts-component-root-html">
+
+<!-- ============================================================
+     BLOQUE DE DATOS: aquí vive toda la información del negocio.
+     Esto es lo único que se conserva al exportar la copia pública.
+     ============================================================ -->
+<script id="datos" type="application/json">{"business":{"name":"Dulce Pecado","slogan":"Tentación artesanal en cada bocado","description":"En Dulce Pecado elaboramos repostería fina y artesanal con un toque moderno y elegante. Cada creación combina ingredientes de calidad y técnica cuidada para convertir cualquier momento en una experiencia dulce y memorable.","emoji":"🍰","colorVino":"#6d1a36","colorOro":"#d8b26a","whatsapp":"","instagram":"dayanafontalvo13","email":"dayanafontalvo10@gmail.com","city":"Santa Marta"},"products":[{"id":"p1","name":"Postre Napolitano","price":"15.000","description":"Capas de bizcocho, crema y gelatina en degradé tricolor, un clásico reinventado con toque artesanal.","image":"🍫","category":""},{"id":"p2","name":"Pavé de Leche Clink","price":"18.000","description":"Pavé cremoso de dulce de leche con galleta crocante, equilibrio perfecto entre suavidad y crunch.","image":"🍮","category":""},{"id":"p3","name":"Postre de Maracuyá","price":"20.000","description":"Postre fresco de maracuyá con mousse suave y toque cítrico, ideal para refrescar el paladar.","image":"🟡","category":""}]}</script>
+
+<!-- ============================================================
+     VISTA PÚBLICA
+     ============================================================ -->
+<header class="site-header" id="siteHeader">
+  <span class="emoji-logo" id="headerEmoji">🍰</span>
+  <h1 id="headerName">Dulce Pecado</h1>
+  <p class="slogan" id="headerSlogan">Tentación artesanal en cada bocado</p>
+</header>
+
+<main>
+  <section class="about">
+    <h2>Sobre nosotros</h2>
+    <p id="aboutText">En Dulce Pecado elaboramos repostería fina y artesanal con un toque moderno y elegante. Cada creación combina ingredientes de calidad y técnica cuidada para convertir cualquier momento en una experiencia dulce y memorable.</p>
+  </section>
+
+  <h2 class="section-title">Nuestro catálogo</h2>
+  <div class="products-grid" id="productsGrid"><div class="product-card"><div class="product-emoji">🍫</div><h3>Postre Napolitano</h3><p class="price">$15.000</p><p class="desc">Capas de bizcocho, crema y gelatina en degradé tricolor, un clásico reinventado con toque artesanal.</p><a class="btn-pedir alt" target="_blank" href="https://instagram.com/dayanafontalvo13">Escríbenos por Instagram</a></div><div class="product-card"><div class="product-emoji">🍮</div><h3>Pavé de Leche Clink</h3><p class="price">$18.000</p><p class="desc">Pavé cremoso de dulce de leche con galleta crocante, equilibrio perfecto entre suavidad y crunch.</p><a class="btn-pedir alt" target="_blank" href="https://instagram.com/dayanafontalvo13">Escríbenos por Instagram</a></div><div class="product-card"><div class="product-emoji">🟡</div><h3>Postre de Maracuyá</h3><p class="price">$20.000</p><p class="desc">Postre fresco de maracuyá con mousse suave y toque cítrico, ideal para refrescar el paladar.</p><a class="btn-pedir alt" target="_blank" href="https://instagram.com/dayanafontalvo13">Escríbenos por Instagram</a></div></div>
+
+  <section class="contact">
+    <h2 class="section-title">Contáctanos</h2>
+    <p id="cityText">📍 Santa Marta</p>
+    <div class="contact-buttons" id="contactButtons"><a class="ig" href="https://instagram.com/dayanafontalvo13" target="_blank">📷 Instagram</a><a class="mail" href="mailto:dayanafontalvo10@gmail.com">✉️ Correo</a></div>
+  </section>
+</main>
+
+<footer id="siteFooter">
+  © <span id="footerYear">2026</span> Dulce Pecado — Santa Marta
+</footer>
+
+<!-- ============================================================
+     BOTÓN Y PANEL DE EDICIÓN (solo en el editor privado)
+     ============================================================ -->
+
+
+
+
+<!-- ============================================================
+     MODAL para agregar / editar producto
+     ============================================================ -->
+
+
+
+
+
+
+</body></html>
